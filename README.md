@@ -2,14 +2,22 @@
 
 Go backend для сервиса клавиатурного тренажера.
 
-## Quick start
+## Quick start (Docker)
+
+```bash
+docker compose up --build
+```
+
+Этот режим поднимает БД, применяет миграции и запускает сервис.
+
+## Local run (without Docker)
 
 ```bash
 go run ./cmd/migrate --command up
 go run ./cmd/server
 ```
 
-Сервис читает конфиг из `config/config.yml`.
+Для локального запуска сервис читает конфиг из `config/config.yml`.
 
 ## Migrations
 
