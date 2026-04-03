@@ -14,9 +14,8 @@ import (
 )
 
 type registerRequest struct {
-	Login    string          `json:"login" validate:"required" example:"player_one"`
-	Password string          `json:"password" validate:"required" example:"secret"`
-	Role     models.UserRole `json:"role" validate:"required,oneof=admin user" example:"user"`
+	Login    string `json:"login" validate:"required" example:"player_one"`
+	Password string `json:"password" validate:"required" example:"secret"`
 }
 
 type registerUserResponse struct {
@@ -84,9 +83,9 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.authService.Register(r.Context(), req.Login, req.Password, req.Role)
+	user, err := h.authService.Register(r.Context(), req.Login, req.Password, models.UserRoleUser)
 	if err != nil {
-		h.log.Warn("register failed", slog.String("login", req.Login), slog.String("role", string(req.Role)), slog.String("error", err.Error()))
+		h.log.Warn("register failed", slog.String("login", req.Login), slog.String("error", err.Error()))
 		apiErr := utils.MapError(err)
 		if err := utils.WriteError(w, apiErr.Status, apiErr.Code, apiErr.Message); err != nil {
 			h.log.Error("register: write service error response failed", slog.Int("status", apiErr.Status), slog.String("code", string(apiErr.Code)), slog.String("error", err.Error()))

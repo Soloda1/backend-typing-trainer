@@ -61,7 +61,7 @@ func (s *Service) Login(ctx context.Context, login, password string) (string, er
 
 func (s *Service) Register(ctx context.Context, login, password string, role models.UserRole) (*models.User, error) {
 	login = strings.TrimSpace(login)
-	if !isValidLogin(login) || strings.TrimSpace(password) == "" || !isAllowedRole(role) {
+	if !isValidLogin(login) || strings.TrimSpace(password) == "" || role != models.UserRoleUser {
 		s.log.Warn("register rejected: invalid input", slog.String("login", login), slog.String("role", string(role)))
 		return nil, utils.ErrInvalidRequest
 	}
@@ -84,10 +84,6 @@ func (s *Service) Register(ctx context.Context, login, password string, role mod
 	}
 
 	return user, nil
-}
-
-func isAllowedRole(role models.UserRole) bool {
-	return role == models.UserRoleAdmin || role == models.UserRoleUser
 }
 
 func isValidLogin(login string) bool {

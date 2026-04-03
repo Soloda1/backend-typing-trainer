@@ -48,7 +48,7 @@ func TestHandler_Register(t *testing.T) {
 			CreatedAt: createdAt,
 		}, nil).Once()
 
-		r := httptest.NewRequest(http.MethodPost, "/register", strings.NewReader(`{"login":"player_one","password":"secret","role":"user"}`))
+		r := httptest.NewRequest(http.MethodPost, "/register", strings.NewReader(`{"login":"player_one","password":"secret"}`))
 		rr := httptest.NewRecorder()
 
 		h.Register(rr, r)
@@ -70,7 +70,7 @@ func TestHandler_Register(t *testing.T) {
 		authSvc.EXPECT().Register(mock.Anything, "player_one", "secret", models.UserRoleUser).
 			Return(nil, utils.ErrUserLoginExists).Once()
 
-		r := httptest.NewRequest(http.MethodPost, "/register", strings.NewReader(`{"login":"player_one","password":"secret","role":"user"}`))
+		r := httptest.NewRequest(http.MethodPost, "/register", strings.NewReader(`{"login":"player_one","password":"secret"}`))
 		rr := httptest.NewRecorder()
 
 		h.Register(rr, r)
@@ -85,7 +85,7 @@ func TestHandler_Register(t *testing.T) {
 		authSvc := mocks.NewAuthInputPort(t)
 		h := newTestAuthHandler(t, authSvc)
 
-		r := httptest.NewRequest(http.MethodPost, "/register", strings.NewReader(`{"login":"player_one","password":"secret","role":"user","extra":"x"}`))
+		r := httptest.NewRequest(http.MethodPost, "/register", strings.NewReader(`{"login":"player_one","password":"secret","extra":"x"}`))
 		rr := httptest.NewRecorder()
 
 		h.Register(rr, r)
@@ -99,7 +99,7 @@ func TestHandler_Register(t *testing.T) {
 	t.Run("nil service returns 500", func(t *testing.T) {
 		h := NewHandler(infraLogger.New("dev"), nil)
 
-		r := httptest.NewRequest(http.MethodPost, "/register", strings.NewReader(`{"login":"player_one","password":"secret","role":"user"}`))
+		r := httptest.NewRequest(http.MethodPost, "/register", strings.NewReader(`{"login":"player_one","password":"secret"}`))
 		rr := httptest.NewRecorder()
 
 		h.Register(rr, r)

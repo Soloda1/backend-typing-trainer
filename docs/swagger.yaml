@@ -26,17 +26,9 @@ definitions:
       password:
         example: secret
         type: string
-      role:
-        allOf:
-        - $ref: '#/definitions/models.UserRole'
-        enum:
-        - admin
-        - user
-        example: user
     required:
     - login
     - password
-    - role
     type: object
   auth.registerResponse:
     properties:

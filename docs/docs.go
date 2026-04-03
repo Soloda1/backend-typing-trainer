@@ -137,8 +137,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "login",
-                "password",
-                "role"
+                "password"
             ],
             "properties": {
                 "login": {
@@ -148,18 +147,6 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "example": "secret"
-                },
-                "role": {
-                    "enum": [
-                        "admin",
-                        "user"
-                    ],
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/models.UserRole"
-                        }
-                    ],
-                    "example": "user"
                 }
             }
         },

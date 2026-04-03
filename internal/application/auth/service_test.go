@@ -65,6 +65,14 @@ func TestService_Register(t *testing.T) {
 			wantCreateCalls: 0,
 		},
 		{
+			name:            "admin role is not allowed for register",
+			login:           "player_one",
+			password:        "secret",
+			role:            models.UserRoleAdmin,
+			wantErr:         utils.ErrInvalidRequest,
+			wantCreateCalls: 0,
+		},
+		{
 			name:            "duplicate login",
 			login:           "player_one",
 			password:        "secret",
@@ -79,10 +87,10 @@ func TestService_Register(t *testing.T) {
 			name:              "success trims login and hashes password",
 			login:             "  player_one  ",
 			password:          "secret",
-			role:              models.UserRoleAdmin,
+			role:              models.UserRoleUser,
 			wantCreateCalls:   1,
 			wantLogin:         "player_one",
-			wantRole:          models.UserRoleAdmin,
+			wantRole:          models.UserRoleUser,
 			checkPasswordHash: true,
 		},
 	}
