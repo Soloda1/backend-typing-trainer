@@ -13,7 +13,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
-	//httpSwagger "github.com/swaggo/http-swagger"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 type Router struct {
@@ -41,7 +41,7 @@ func (r *Router) Setup(cfg *config.Config) {
 	r.router.Use(chiMiddleware.Recoverer)
 	r.router.Use(chiMiddleware.Timeout(cfg.HTTPServer.RequestTimeout))
 
-	//r.router.Get("/swagger/*", httpSwagger.WrapHandler)
+	r.router.Get("/swagger/*", httpSwagger.WrapHandler)
 	r.router.Mount("/", r.setupAuthRoutes())
 	r.setupProtectedRoutes()
 }

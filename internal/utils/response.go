@@ -73,12 +73,8 @@ func defaultErrorMessage(code ErrorCode) string {
 		return "unauthorized"
 	case ErrorCodeForbidden:
 		return "forbidden"
-	case ErrorCodeNotFound, ErrorCodeRoomNotFound, ErrorCodeSlotNotFound, ErrorCodeBookingNotFound:
+	case ErrorCodeNotFound:
 		return "not found"
-	case ErrorCodeSlotAlreadyBooked:
-		return "slot is already booked"
-	case ErrorCodeScheduleExists:
-		return "schedule for this room already exists and cannot be changed"
 	default:
 		return "internal server error"
 	}

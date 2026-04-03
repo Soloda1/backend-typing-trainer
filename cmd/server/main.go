@@ -1,8 +1,8 @@
-// Package main Room Booking Service API.
+// Package main Typing Trainer Service API.
 //
-// @title Room Booking Service API
+// @title Typing Trainer Service API
 // @version 1.0.0
-// @description Сервис бронирования переговорок.
+// @description Backend API для сервиса клавиатурного тренажера.
 // @BasePath /
 // @schemes http
 //
@@ -23,7 +23,7 @@ import (
 	"syscall"
 	"time"
 
-	//_ "backend-typing-trainer/docs"
+	_ "backend-typing-trainer/docs"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
