@@ -1,0 +1,186 @@
+basePath: /
+definitions:
+  auth.LoginResponse:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+        type: string
+    type: object
+  auth.loginRequest:
+    properties:
+      login:
+        example: player_one
+        type: string
+      password:
+        example: secret
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  auth.registerRequest:
+    properties:
+      login:
+        example: player_one
+        type: string
+      password:
+        example: secret
+        type: string
+      role:
+        allOf:
+        - $ref: '#/definitions/models.UserRole'
+        enum:
+        - admin
+        - user
+        example: user
+    required:
+    - login
+    - password
+    - role
+    type: object
+  auth.registerResponse:
+    properties:
+      user:
+        $ref: '#/definitions/auth.registerUserResponse'
+    type: object
+  auth.registerUserResponse:
+    properties:
+      createdAt:
+        example: "2026-03-22T21:00:00Z"
+        type: string
+      id:
+        example: 22222222-2222-2222-2222-222222222222
+        type: string
+      login:
+        example: player_one
+        type: string
+      role:
+        allOf:
+        - $ref: '#/definitions/models.UserRole'
+        example: user
+    type: object
+  models.UserRole:
+    enum:
+    - admin
+    - user
+    type: string
+    x-enum-varnames:
+    - UserRoleAdmin
+    - UserRoleUser
+  utils.ErrorCode:
+    enum:
+    - INVALID_REQUEST
+    - UNAUTHORIZED
+    - NOT_FOUND
+    - FORBIDDEN
+    - INTERNAL_ERROR
+    type: string
+    x-enum-varnames:
+    - ErrorCodeInvalidRequest
+    - ErrorCodeUnauthorized
+    - ErrorCodeNotFound
+    - ErrorCodeForbidden
+    - ErrorCodeInternalError
+  utils.ErrorDetails:
+    properties:
+      code:
+        allOf:
+        - $ref: '#/definitions/utils.ErrorCode'
+        example: INVALID_REQUEST
+      message:
+        example: invalid request
+        type: string
+    type: object
+  utils.ErrorResponse:
+    properties:
+      error:
+        $ref: '#/definitions/utils.ErrorDetails'
+    type: object
+  utils.InternalErrorDetails:
+    properties:
+      code:
+        allOf:
+        - $ref: '#/definitions/utils.ErrorCode'
+        example: INTERNAL_ERROR
+      message:
+        example: internal server error
+        type: string
+    type: object
+  utils.InternalErrorResponse:
+    properties:
+      error:
+        $ref: '#/definitions/utils.InternalErrorDetails'
+    type: object
+info:
+  contact: {}
+  description: Backend API для сервиса клавиатурного тренажера.
+  title: Typing Trainer Service API
+  version: 1.0.0
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешная авторизация
+          schema:
+            $ref: '#/definitions/auth.LoginResponse'
+        "401":
+          description: Неверные учётные данные
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      summary: Авторизация по логину и паролю
+      tags:
+      - Auth
+  /register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Register payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.registerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Пользователь создан
+          schema:
+            $ref: '#/definitions/auth.registerResponse'
+        "400":
+          description: Неверный запрос или логин уже занят
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      summary: Регистрация пользователя
+      tags:
+      - Auth
+schemes:
+- http
+securityDefinitions:
+  BearerAuth:
+    description: JWT token в формате `Bearer <token>`.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
