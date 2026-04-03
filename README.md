@@ -26,6 +26,18 @@ go run ./cmd/migrate --command up
 go run ./cmd/migrate --command down
 ```
 
+## Auth API notes
+
+- `POST /register`: принимает только `login` и `password`.
+- Роль в запросе не передается; сервер всегда создает пользователя с ролью `user`.
+- Если логин уже занят, API возвращает `409` с кодом ошибки `LOGIN_EXISTS`.
+
+Пример запроса:
+
+```json
+{"login":"player_one","password":"secret"}
+```
+
 ## Seeded admin (учебный режим)
 
 После применения миграций создается системный администратор:
@@ -40,3 +52,13 @@ go run ./cmd/migrate --command down
 - `users_single_admin_idx` на `users(role)` при `role = 'admin'`
 
 Важно: эти креды оставлены для курсового/локального запуска.
+
+## Swagger
+
+- UI доступен на `GET /swagger/index.html` (роут `"/swagger/*"`).
+- Генерация документации в `./docs`:
+
+```bash
+go run github.com/swaggo/swag/cmd/swag@latest init -g ./cmd/server/main.go -o ./docs --parseInternal
+```
+
