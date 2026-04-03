@@ -91,7 +91,13 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Неверный запрос или логин уже занят",
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Логин уже занят",
                         "schema": {
                             "$ref": "#/definitions/utils.ErrorResponse"
                         }
@@ -201,6 +207,8 @@ const docTemplate = `{
                 "UNAUTHORIZED",
                 "NOT_FOUND",
                 "FORBIDDEN",
+                "CONFLICT",
+                "LOGIN_EXISTS",
                 "INTERNAL_ERROR"
             ],
             "x-enum-varnames": [
@@ -208,6 +216,8 @@ const docTemplate = `{
                 "ErrorCodeUnauthorized",
                 "ErrorCodeNotFound",
                 "ErrorCodeForbidden",
+                "ErrorCodeConflict",
+                "ErrorCodeLoginExists",
                 "ErrorCodeInternalError"
             ]
         },

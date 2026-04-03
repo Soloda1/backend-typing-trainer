@@ -33,6 +33,8 @@ func HTTPCodeConverter(status int) ErrorCode {
 		return ErrorCodeForbidden
 	case http.StatusNotFound:
 		return ErrorCodeNotFound
+	case http.StatusConflict:
+		return ErrorCodeConflict
 	default:
 		return ErrorCodeInternalError
 	}
@@ -75,6 +77,10 @@ func defaultErrorMessage(code ErrorCode) string {
 		return "forbidden"
 	case ErrorCodeNotFound:
 		return "not found"
+	case ErrorCodeConflict:
+		return "conflict"
+	case ErrorCodeLoginExists:
+		return "login already exists"
 	default:
 		return "internal server error"
 	}

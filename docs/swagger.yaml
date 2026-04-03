@@ -65,6 +65,8 @@ definitions:
     - UNAUTHORIZED
     - NOT_FOUND
     - FORBIDDEN
+    - CONFLICT
+    - LOGIN_EXISTS
     - INTERNAL_ERROR
     type: string
     x-enum-varnames:
@@ -72,6 +74,8 @@ definitions:
     - ErrorCodeUnauthorized
     - ErrorCodeNotFound
     - ErrorCodeForbidden
+    - ErrorCodeConflict
+    - ErrorCodeLoginExists
     - ErrorCodeInternalError
   utils.ErrorDetails:
     properties:
@@ -157,7 +161,11 @@ paths:
           schema:
             $ref: '#/definitions/auth.registerResponse'
         "400":
-          description: Неверный запрос или логин уже занят
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "409":
+          description: Логин уже занят
           schema:
             $ref: '#/definitions/utils.ErrorResponse'
         "500":

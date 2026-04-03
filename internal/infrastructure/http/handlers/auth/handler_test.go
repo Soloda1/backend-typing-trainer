@@ -63,7 +63,7 @@ func TestHandler_Register(t *testing.T) {
 		require.True(t, resp.User.CreatedAt.Equal(createdAt))
 	})
 
-	t.Run("duplicate login returns 400 invalid request", func(t *testing.T) {
+	t.Run("duplicate login returns 409 login exists", func(t *testing.T) {
 		authSvc := mocks.NewAuthInputPort(t)
 		h := newTestAuthHandler(t, authSvc)
 
@@ -75,10 +75,10 @@ func TestHandler_Register(t *testing.T) {
 
 		h.Register(rr, r)
 
-		require.Equal(t, http.StatusBadRequest, rr.Code)
+		require.Equal(t, http.StatusConflict, rr.Code)
 		errResp := decodeErrorResponse(t, rr)
-		require.Equal(t, utils.ErrorCodeInvalidRequest, errResp.Error.Code)
-		require.Equal(t, "invalid request", errResp.Error.Message)
+		require.Equal(t, utils.ErrorCodeLoginExists, errResp.Error.Code)
+		require.Equal(t, "login already exists", errResp.Error.Message)
 	})
 
 	t.Run("unknown field returns 400", func(t *testing.T) {

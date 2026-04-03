@@ -12,6 +12,8 @@ const (
 	ErrorCodeUnauthorized   ErrorCode = "UNAUTHORIZED"
 	ErrorCodeNotFound       ErrorCode = "NOT_FOUND"
 	ErrorCodeForbidden      ErrorCode = "FORBIDDEN"
+	ErrorCodeConflict       ErrorCode = "CONFLICT"
+	ErrorCodeLoginExists    ErrorCode = "LOGIN_EXISTS"
 	ErrorCodeInternalError  ErrorCode = "INTERNAL_ERROR"
 )
 
@@ -45,7 +47,7 @@ func MapError(err error) APIError {
 	case errors.Is(err, ErrNotFound):
 		return APIError{Status: http.StatusNotFound, Code: ErrorCodeNotFound, Message: "not found"}
 	case errors.Is(err, ErrUserLoginExists):
-		return APIError{Status: http.StatusBadRequest, Code: ErrorCodeInvalidRequest, Message: "invalid request"}
+		return APIError{Status: http.StatusConflict, Code: ErrorCodeLoginExists, Message: "login already exists"}
 	default:
 		return APIError{Status: http.StatusInternalServerError, Code: ErrorCodeInternalError, Message: "internal server error"}
 	}

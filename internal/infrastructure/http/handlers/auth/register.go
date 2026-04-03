@@ -36,7 +36,8 @@ type registerResponse struct {
 // @Produce json
 // @Param request body registerRequest true "Register payload"
 // @Success 201 {object} registerResponse "Пользователь создан"
-// @Failure 400 {object} utils.ErrorResponse "Неверный запрос или логин уже занят"
+// @Failure 400 {object} utils.ErrorResponse "Неверный запрос"
+// @Failure 409 {object} utils.ErrorResponse "Логин уже занят"
 // @Failure 500 {object} utils.InternalErrorResponse "Внутренняя ошибка сервера"
 // @Router /register [post]
 func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {

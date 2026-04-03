@@ -14,7 +14,7 @@ func TestHTTPCodeConverter(t *testing.T) {
 	require.Equal(t, ErrorCodeUnauthorized, HTTPCodeConverter(http.StatusUnauthorized))
 	require.Equal(t, ErrorCodeForbidden, HTTPCodeConverter(http.StatusForbidden))
 	require.Equal(t, ErrorCodeNotFound, HTTPCodeConverter(http.StatusNotFound))
-	require.Equal(t, ErrorCodeInternalError, HTTPCodeConverter(http.StatusConflict))
+	require.Equal(t, ErrorCodeConflict, HTTPCodeConverter(http.StatusConflict))
 }
 
 func TestWriteJSON(t *testing.T) {
@@ -60,5 +60,6 @@ func TestDefaultErrorMessage(t *testing.T) {
 	require.Equal(t, "invalid request", defaultErrorMessage(ErrorCodeInvalidRequest))
 	require.Equal(t, "unauthorized", defaultErrorMessage(ErrorCodeUnauthorized))
 	require.Equal(t, "forbidden", defaultErrorMessage(ErrorCodeForbidden))
+	require.Equal(t, "login already exists", defaultErrorMessage(ErrorCodeLoginExists))
 	require.Equal(t, "internal server error", defaultErrorMessage(ErrorCodeInternalError))
 }

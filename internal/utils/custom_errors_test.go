@@ -55,9 +55,9 @@ func TestMapError(t *testing.T) {
 		{
 			name:    "user login exists",
 			err:     ErrUserLoginExists,
-			status:  http.StatusBadRequest,
-			code:    ErrorCodeInvalidRequest,
-			message: "invalid request",
+			status:  http.StatusConflict,
+			code:    ErrorCodeLoginExists,
+			message: "login already exists",
 		},
 		{
 			name:    "unknown error",
