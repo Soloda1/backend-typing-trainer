@@ -1,0 +1,71 @@
+services:
+  trainer-service-db:
+    image: postgres:16-alpine
+    container_name: trainer-service-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: trainer
+      POSTGRES_PORT: 5432
+    command: postgres -p 5432
+    volumes:
+      - trainer_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - trainer-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -p 5432"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrator:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrator
+    container_name: trainer-service-migrator
+    depends_on:
+      trainer-service-db:
+        condition: service_healthy
+    volumes:
+      - ./migrations:/app/migrations
+      - ./config:/app/config
+    environment:
+      ENV: ${ENV:-dev}
+    networks:
+      - trainer-net
+    command: ./migrator -command up
+
+
+  trainer-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: trainer-service
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+      trainer-service-db:
+        condition: service_healthy
+    volumes:
+      - ./config:/app/config
+    environment:
+      ENV: ${ENV:-dev}
+    networks:
+      - trainer-net
+    ports:
+      - "8080:8080"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+volumes:
+  trainer_postgres_data:
+
+networks:
+  trainer-net:
+    name: trainer-net
+    driver: bridge
