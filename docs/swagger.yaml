@@ -159,6 +159,57 @@ definitions:
     x-enum-varnames:
     - UserRoleAdmin
     - UserRoleUser
+  statistics.createStatisticRequest:
+    properties:
+      execution_time:
+        type: number
+      exercise_id:
+        type: string
+      level_id:
+        type: string
+      mistakes_percent:
+        minimum: 0
+        type: number
+      speed:
+        type: number
+      user_id:
+        type: string
+    required:
+    - exercise_id
+    - level_id
+    - user_id
+    type: object
+  statistics.statisticListResponse:
+    properties:
+      statistics:
+        items:
+          $ref: '#/definitions/statistics.statisticResponse'
+        type: array
+    type: object
+  statistics.statisticResponse:
+    properties:
+      created_at:
+        type: string
+      execution_time:
+        type: number
+      exercise_id:
+        type: string
+      id:
+        type: string
+      level_id:
+        type: string
+      mistakes_percent:
+        type: number
+      speed:
+        type: number
+      user_id:
+        type: string
+    type: object
+  statistics.statisticSingleResponse:
+    properties:
+      statistic:
+        $ref: '#/definitions/statistics.statisticResponse'
+    type: object
   utils.ErrorCode:
     enum:
     - INVALID_REQUEST
@@ -795,6 +846,95 @@ paths:
       summary: Регистрация пользователя
       tags:
       - Auth
+  /statistics:
+    get:
+      description: 'Нужно передать ровно один фильтр: user_id, level_id или exercise_id.'
+      parameters:
+      - description: User ID
+        format: uuid
+        in: query
+        name: user_id
+        type: string
+      - description: Level ID
+        format: uuid
+        in: query
+        name: level_id
+        type: string
+      - description: Exercise ID
+        format: uuid
+        in: query
+        name: exercise_id
+        type: string
+      - default: 20
+        description: Лимит
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 0
+        description: Смещение
+        in: query
+        minimum: 0
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список статистики
+          schema:
+            $ref: '#/definitions/statistics.statisticListResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Список статистики по фильтру
+      tags:
+      - Statistics
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Statistic payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/statistics.createStatisticRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Статистика создана
+          schema:
+            $ref: '#/definitions/statistics.statisticSingleResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Создание записи статистики
+      tags:
+      - Statistics
 schemes:
 - http
 securityDefinitions:

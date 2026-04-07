@@ -913,6 +913,142 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/statistics": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Нужно передать ровно один фильтр: user_id, level_id или exercise_id.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Список статистики по фильтру",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Level ID",
+                        "name": "level_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Exercise ID",
+                        "name": "exercise_id",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Лимит",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Смещение",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список статистики",
+                        "schema": {
+                            "$ref": "#/definitions/statistics.statisticListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Создание записи статистики",
+                "parameters": [
+                    {
+                        "description": "Statistic payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/statistics.createStatisticRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Статистика создана",
+                        "schema": {
+                            "$ref": "#/definitions/statistics.statisticSingleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1156,6 +1292,83 @@ const docTemplate = `{
                 "UserRoleAdmin",
                 "UserRoleUser"
             ]
+        },
+        "statistics.createStatisticRequest": {
+            "type": "object",
+            "required": [
+                "exercise_id",
+                "level_id",
+                "user_id"
+            ],
+            "properties": {
+                "execution_time": {
+                    "type": "number"
+                },
+                "exercise_id": {
+                    "type": "string"
+                },
+                "level_id": {
+                    "type": "string"
+                },
+                "mistakes_percent": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "speed": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "statistics.statisticListResponse": {
+            "type": "object",
+            "properties": {
+                "statistics": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/statistics.statisticResponse"
+                    }
+                }
+            }
+        },
+        "statistics.statisticResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "execution_time": {
+                    "type": "number"
+                },
+                "exercise_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "level_id": {
+                    "type": "string"
+                },
+                "mistakes_percent": {
+                    "type": "number"
+                },
+                "speed": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "statistics.statisticSingleResponse": {
+            "type": "object",
+            "properties": {
+                "statistic": {
+                    "$ref": "#/definitions/statistics.statisticResponse"
+                }
+            }
         },
         "utils.ErrorCode": {
             "type": "string",
