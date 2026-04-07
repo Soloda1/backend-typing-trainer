@@ -86,7 +86,7 @@ func (r *Router) setupProtectedRoutes() {
 
 		statisticsHandler := statisticshandler.NewHandler(r.log, r.statisticsService)
 		protected.Post("/statistics", statisticsHandler.Create)
-		protected.Get("/statistics", statisticsHandler.List)
+		protected.With(middlewares.RequireSelfOrRoles(r.log, "user_id", models.UserRoleAdmin)).Get("/statistics/users/{user_id}", statisticsHandler.ListByUserID)
 
 		protected.Group(func(admin chi.Router) {
 			admin.Use(middlewares.RequireRoles(r.log, models.UserRoleAdmin))
@@ -96,6 +96,8 @@ func (r *Router) setupProtectedRoutes() {
 			admin.Post("/exercises", exercisesHandler.Create)
 			admin.Patch("/exercises/{id}", exercisesHandler.Update)
 			admin.Delete("/exercises/{id}", exercisesHandler.Delete)
+			admin.Get("/statistics/levels/{level_id}", statisticsHandler.ListByLevelID)
+			admin.Get("/statistics/exercises/{exercise_id}", statisticsHandler.ListByExerciseID)
 		})
 	})
 }

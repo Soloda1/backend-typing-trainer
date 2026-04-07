@@ -1,12 +1,14 @@
 package statistics
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -50,10 +52,13 @@ func TestHandler_ListByUser(t *testing.T) {
 	userID := uuid.MustParse("11111111-1111-1111-1111-111111111111")
 	svc.EXPECT().ListByUserID(mock.Anything, userID, 20, 0).Return([]*models.Statistic{}, nil).Once()
 
-	r := httptest.NewRequest(http.MethodGet, "/statistics?user_id="+userID.String(), nil)
+	r := httptest.NewRequest(http.MethodGet, "/statistics/users/"+userID.String(), nil)
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("user_id", userID.String())
+	r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, rctx))
 	rr := httptest.NewRecorder()
 
-	h.List(rr, r)
+	h.ListByUserID(rr, r)
 
 	require.Equal(t, http.StatusOK, rr.Code)
 }
@@ -65,10 +70,13 @@ func TestHandler_ListByLevel(t *testing.T) {
 	levelID := uuid.MustParse("22222222-2222-2222-2222-222222222222")
 	svc.EXPECT().ListByLevelID(mock.Anything, levelID, 20, 0).Return([]*models.Statistic{}, nil).Once()
 
-	r := httptest.NewRequest(http.MethodGet, "/statistics?level_id="+levelID.String(), nil)
+	r := httptest.NewRequest(http.MethodGet, "/statistics/levels/"+levelID.String(), nil)
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("level_id", levelID.String())
+	r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, rctx))
 	rr := httptest.NewRecorder()
 
-	h.List(rr, r)
+	h.ListByLevelID(rr, r)
 
 	require.Equal(t, http.StatusOK, rr.Code)
 }
@@ -80,22 +88,28 @@ func TestHandler_ListByExercise(t *testing.T) {
 	exerciseID := uuid.MustParse("33333333-3333-3333-3333-333333333333")
 	svc.EXPECT().ListByExerciseID(mock.Anything, exerciseID, 20, 0).Return([]*models.Statistic{}, nil).Once()
 
-	r := httptest.NewRequest(http.MethodGet, "/statistics?exercise_id="+exerciseID.String(), nil)
+	r := httptest.NewRequest(http.MethodGet, "/statistics/exercises/"+exerciseID.String(), nil)
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("exercise_id", exerciseID.String())
+	r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, rctx))
 	rr := httptest.NewRecorder()
 
-	h.List(rr, r)
+	h.ListByExerciseID(rr, r)
 
 	require.Equal(t, http.StatusOK, rr.Code)
 }
 
-func TestHandler_ListInvalidFilters(t *testing.T) {
+func TestHandler_ListByUserInvalidID(t *testing.T) {
 	svc := mocks.NewStatisticsInputPort(t)
 	h := newTestStatisticsHandler(t, svc)
 
-	r := httptest.NewRequest(http.MethodGet, "/statistics", nil)
+	r := httptest.NewRequest(http.MethodGet, "/statistics/users/not-uuid", nil)
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("user_id", "not-uuid")
+	r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, rctx))
 	rr := httptest.NewRecorder()
 
-	h.List(rr, r)
+	h.ListByUserID(rr, r)
 
 	require.Equal(t, http.StatusBadRequest, rr.Code)
 	errResp := decodeStatisticsError(t, rr)
