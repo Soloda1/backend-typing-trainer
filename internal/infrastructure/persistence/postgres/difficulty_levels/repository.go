@@ -271,7 +271,7 @@ func mapPgError(err error) error {
 	}
 
 	switch pgErr.Code {
-	case "23503", "23514", "22P02":
+	case "23503", "23505", "23514", "22P02":
 		return utils.ErrInvalidRequest
 	default:
 		return nil
