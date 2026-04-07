@@ -99,6 +99,37 @@ definitions:
     required:
     - keyboard_zone_ids
     type: object
+  exercises.exerciseListResponse:
+    properties:
+      exercises:
+        items:
+          $ref: '#/definitions/exercises.exerciseResponse'
+        type: array
+    type: object
+  exercises.exerciseResponse:
+    properties:
+      id:
+        type: string
+      level_id:
+        type: string
+      text:
+        type: string
+    type: object
+  exercises.exerciseSingleResponse:
+    properties:
+      exercise:
+        $ref: '#/definitions/exercises.exerciseResponse'
+    type: object
+  exercises.upsertExerciseRequest:
+    properties:
+      level_id:
+        type: string
+      text:
+        type: string
+    required:
+    - level_id
+    - text
+    type: object
   keyboardzones.keyboardZoneListResponse:
     properties:
       keyboard_zones:
@@ -387,6 +418,209 @@ paths:
       summary: Обновление уровня сложности
       tags:
       - DifficultyLevels
+  /exercises:
+    get:
+      parameters:
+      - default: 20
+        description: Лимит
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 0
+        description: Смещение
+        in: query
+        minimum: 0
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список упражнений
+          schema:
+            $ref: '#/definitions/exercises.exerciseListResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Список упражнений
+      tags:
+      - Exercises
+    post:
+      consumes:
+      - application/json
+      description: Доступно только администратору.
+      parameters:
+      - description: Exercise payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/exercises.upsertExerciseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Упражнение создано
+          schema:
+            $ref: '#/definitions/exercises.exerciseSingleResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Создание упражнения
+      tags:
+      - Exercises
+  /exercises/{id}:
+    delete:
+      description: Доступно только администратору.
+      parameters:
+      - description: Exercise ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Упражнение удалено
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "404":
+          description: Упражнение не найдено
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Удаление упражнения
+      tags:
+      - Exercises
+    get:
+      parameters:
+      - description: Exercise ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Упражнение
+          schema:
+            $ref: '#/definitions/exercises.exerciseSingleResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "404":
+          description: Упражнение не найдено
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Получение упражнения по ID
+      tags:
+      - Exercises
+    patch:
+      consumes:
+      - application/json
+      description: Доступно только администратору.
+      parameters:
+      - description: Exercise ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Exercise payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/exercises.upsertExerciseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Упражнение обновлено
+          schema:
+            $ref: '#/definitions/exercises.exerciseSingleResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "404":
+          description: Упражнение не найдено
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Обновление упражнения
+      tags:
+      - Exercises
   /keyboard-zones:
     get:
       parameters:

@@ -10,6 +10,7 @@ import (
 	"backend-typing-trainer/internal/infrastructure/config"
 	authhandler "backend-typing-trainer/internal/infrastructure/http/handlers/auth"
 	difficultylevelshandler "backend-typing-trainer/internal/infrastructure/http/handlers/difficulty_levels"
+	exerciseshandler "backend-typing-trainer/internal/infrastructure/http/handlers/exercises"
 	keyboardzoneshandler "backend-typing-trainer/internal/infrastructure/http/handlers/keyboard_zones"
 
 	"backend-typing-trainer/internal/infrastructure/http/middlewares"
@@ -24,17 +25,19 @@ type Router struct {
 	log                     ports.Logger
 	authService             input.Auth
 	difficultyLevelsService input.DifficultyLevels
+	exercisesService        input.Exercises
 	keyboardZonesService    input.KeyboardZones
 
 	tokenManager jwtport.TokenManager
 }
 
-func NewRouter(log ports.Logger, authService input.Auth, difficultyLevelsService input.DifficultyLevels, keyboardZonesService input.KeyboardZones, tokenManager jwtport.TokenManager) *Router {
+func NewRouter(log ports.Logger, authService input.Auth, difficultyLevelsService input.DifficultyLevels, exercisesService input.Exercises, keyboardZonesService input.KeyboardZones, tokenManager jwtport.TokenManager) *Router {
 	return &Router{
 		router:                  chi.NewRouter(),
 		log:                     log,
 		authService:             authService,
 		difficultyLevelsService: difficultyLevelsService,
+		exercisesService:        exercisesService,
 		keyboardZonesService:    keyboardZonesService,
 
 		tokenManager: tokenManager,
@@ -69,6 +72,10 @@ func (r *Router) setupProtectedRoutes() {
 		protected.Get("/difficulty-levels", h.List)
 		protected.Get("/difficulty-levels/{id}", h.GetByID)
 
+		exercisesHandler := exerciseshandler.NewHandler(r.log, r.exercisesService)
+		protected.Get("/exercises", exercisesHandler.List)
+		protected.Get("/exercises/{id}", exercisesHandler.GetByID)
+
 		keyboardZonesHandler := keyboardzoneshandler.NewHandler(r.log, r.keyboardZonesService)
 		protected.Get("/keyboard-zones", keyboardZonesHandler.List)
 		protected.Get("/keyboard-zones/{id}", keyboardZonesHandler.GetByID)
@@ -79,6 +86,9 @@ func (r *Router) setupProtectedRoutes() {
 			admin.Post("/difficulty-levels", h.Create)
 			admin.Patch("/difficulty-levels/{id}", h.Update)
 			admin.Delete("/difficulty-levels/{id}", h.Delete)
+			admin.Post("/exercises", exercisesHandler.Create)
+			admin.Patch("/exercises/{id}", exercisesHandler.Update)
+			admin.Delete("/exercises/{id}", exercisesHandler.Delete)
 		})
 	})
 }

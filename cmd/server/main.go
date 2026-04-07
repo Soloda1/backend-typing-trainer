@@ -29,6 +29,7 @@ import (
 
 	authapp "backend-typing-trainer/internal/application/auth"
 	difficultylevelsapp "backend-typing-trainer/internal/application/difficulty_levels"
+	exercisesapp "backend-typing-trainer/internal/application/exercises"
 	keyboardzonesapp "backend-typing-trainer/internal/application/keyboard_zones"
 
 	jwtmanager "backend-typing-trainer/internal/infrastructure/auth/jwt"
@@ -36,6 +37,7 @@ import (
 	httpserver "backend-typing-trainer/internal/infrastructure/http"
 	"backend-typing-trainer/internal/infrastructure/logger"
 	difficultylevelsrepo "backend-typing-trainer/internal/infrastructure/persistence/postgres/difficulty_levels"
+	exercisesrepo "backend-typing-trainer/internal/infrastructure/persistence/postgres/exercises"
 	keyboardzonesrepo "backend-typing-trainer/internal/infrastructure/persistence/postgres/keyboard_zones"
 	usersrepo "backend-typing-trainer/internal/infrastructure/persistence/postgres/users"
 )
@@ -70,14 +72,16 @@ func main() {
 	tokenManager := jwtmanager.NewManager(cfg.JWT.Secret, cfg.JWT.TTL, cfg.JWT.Issuer, log)
 	usersRepository := usersrepo.NewRepository(dbPool, log)
 	difficultyLevelsRepository := difficultylevelsrepo.NewRepository(dbPool, log)
+	exercisesRepository := exercisesrepo.NewRepository(dbPool, log)
 	keyboardZonesRepository := keyboardzonesrepo.NewRepository(dbPool, log)
 
 	authService := authapp.NewService(tokenManager, usersRepository, log)
 	difficultyLevelsService := difficultylevelsapp.NewService(difficultyLevelsRepository, log)
+	exercisesService := exercisesapp.NewService(exercisesRepository, log)
 	keyboardZonesService := keyboardzonesapp.NewService(keyboardZonesRepository, log)
 
 	address := fmt.Sprintf("%s:%d", cfg.HTTPServer.Address, cfg.HTTPServer.Port)
-	server := httpserver.NewServer(address, log, authService, difficultyLevelsService, keyboardZonesService, tokenManager)
+	server := httpserver.NewServer(address, log, authService, difficultyLevelsService, exercisesService, keyboardZonesService, tokenManager)
 
 	serverErr := make(chan error, 1)
 	go func() {

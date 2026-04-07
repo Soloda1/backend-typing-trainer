@@ -16,18 +16,20 @@ type Server struct {
 	log                     ports.Logger
 	authService             input.Auth
 	difficultyLevelsService input.DifficultyLevels
+	exercisesService        input.Exercises
 	keyboardZonesService    input.KeyboardZones
 	tokenManager            jwtport.TokenManager
 	router                  *Router
 	server                  *http.Server
 }
 
-func NewServer(address string, log ports.Logger, authService input.Auth, difficultyLevelsService input.DifficultyLevels, keyboardZonesService input.KeyboardZones, tokenManager jwtport.TokenManager) *Server {
+func NewServer(address string, log ports.Logger, authService input.Auth, difficultyLevelsService input.DifficultyLevels, exercisesService input.Exercises, keyboardZonesService input.KeyboardZones, tokenManager jwtport.TokenManager) *Server {
 	return &Server{
 		address:                 address,
 		log:                     log,
 		authService:             authService,
 		difficultyLevelsService: difficultyLevelsService,
+		exercisesService:        exercisesService,
 		keyboardZonesService:    keyboardZonesService,
 
 		tokenManager: tokenManager,
@@ -35,7 +37,7 @@ func NewServer(address string, log ports.Logger, authService input.Auth, difficu
 }
 
 func (s *Server) Run(cfg *config.Config) error {
-	s.router = NewRouter(s.log, s.authService, s.difficultyLevelsService, s.keyboardZonesService, s.tokenManager)
+	s.router = NewRouter(s.log, s.authService, s.difficultyLevelsService, s.exercisesService, s.keyboardZonesService, s.tokenManager)
 	s.router.Setup(cfg)
 
 	s.server = &http.Server{
