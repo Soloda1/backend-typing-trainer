@@ -13,6 +13,18 @@ const (
 	defaultListOffset = 0
 )
 
+// List godoc
+// @Summary Список уровней сложности
+// @Tags DifficultyLevels
+// @Produce json
+// @Security BearerAuth
+// @Param limit query int false "Лимит" default(20) minimum(1)
+// @Param offset query int false "Смещение" default(0) minimum(0)
+// @Success 200 {object} difficultyLevelListResponse "Список уровней сложности"
+// @Failure 400 {object} utils.ErrorResponse "Неверный запрос"
+// @Failure 401 {object} utils.ErrorResponse "Не авторизован"
+// @Failure 500 {object} utils.InternalErrorResponse "Внутренняя ошибка сервера"
+// @Router /difficulty-levels [get]
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	h.log.Debug("list difficulty levels started")
 

@@ -8,6 +8,20 @@ import (
 	"backend-typing-trainer/internal/utils"
 )
 
+// Create godoc
+// @Summary Создание уровня сложности
+// @Description Доступно только администратору. Создает уровень сложности и связывает его с зонами клавиатуры.
+// @Tags DifficultyLevels
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body upsertDifficultyLevelRequest true "Difficulty level payload"
+// @Success 201 {object} difficultyLevelSingleResponse "Уровень сложности создан"
+// @Failure 400 {object} utils.ErrorResponse "Неверный запрос"
+// @Failure 401 {object} utils.ErrorResponse "Не авторизован"
+// @Failure 403 {object} utils.ErrorResponse "Недостаточно прав"
+// @Failure 500 {object} utils.InternalErrorResponse "Внутренняя ошибка сервера"
+// @Router /difficulty-levels [post]
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	h.log.Debug("create difficulty level started")
 

@@ -10,6 +10,20 @@ import (
 	"backend-typing-trainer/internal/utils"
 )
 
+// Delete godoc
+// @Summary Удаление уровня сложности
+// @Description Доступно только администратору.
+// @Tags DifficultyLevels
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Difficulty level ID" format(uuid)
+// @Success 204 "Уровень сложности удален"
+// @Failure 400 {object} utils.ErrorResponse "Неверный запрос"
+// @Failure 401 {object} utils.ErrorResponse "Не авторизован"
+// @Failure 403 {object} utils.ErrorResponse "Недостаточно прав"
+// @Failure 404 {object} utils.ErrorResponse "Уровень не найден"
+// @Failure 500 {object} utils.InternalErrorResponse "Внутренняя ошибка сервера"
+// @Router /difficulty-levels/{id} [delete]
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	h.log.Debug("delete difficulty level started")
 

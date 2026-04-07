@@ -10,6 +10,18 @@ import (
 	"backend-typing-trainer/internal/utils"
 )
 
+// GetByID godoc
+// @Summary Получение уровня сложности по ID
+// @Tags DifficultyLevels
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Difficulty level ID" format(uuid)
+// @Success 200 {object} difficultyLevelSingleResponse "Уровень сложности"
+// @Failure 400 {object} utils.ErrorResponse "Неверный запрос"
+// @Failure 401 {object} utils.ErrorResponse "Не авторизован"
+// @Failure 404 {object} utils.ErrorResponse "Уровень не найден"
+// @Failure 500 {object} utils.InternalErrorResponse "Внутренняя ошибка сервера"
+// @Router /difficulty-levels/{id} [get]
 func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 	h.log.Debug("get difficulty level by id started")
 

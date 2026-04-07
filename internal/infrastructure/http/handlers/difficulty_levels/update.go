@@ -11,6 +11,22 @@ import (
 	"backend-typing-trainer/internal/utils"
 )
 
+// Update godoc
+// @Summary Обновление уровня сложности
+// @Description Доступно только администратору. Обновляет параметры уровня и связи с зонами клавиатуры.
+// @Tags DifficultyLevels
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Difficulty level ID" format(uuid)
+// @Param request body upsertDifficultyLevelRequest true "Difficulty level payload"
+// @Success 200 {object} difficultyLevelSingleResponse "Уровень сложности обновлен"
+// @Failure 400 {object} utils.ErrorResponse "Неверный запрос"
+// @Failure 401 {object} utils.ErrorResponse "Не авторизован"
+// @Failure 403 {object} utils.ErrorResponse "Недостаточно прав"
+// @Failure 404 {object} utils.ErrorResponse "Уровень не найден"
+// @Failure 500 {object} utils.InternalErrorResponse "Внутренняя ошибка сервера"
+// @Router /difficulty-levels/{id} [patch]
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	h.log.Debug("update difficulty level started")
 

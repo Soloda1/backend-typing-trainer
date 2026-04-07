@@ -11,6 +11,320 @@
     },
     "basePath": "/",
     "paths": {
+        "/difficulty-levels": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DifficultyLevels"
+                ],
+                "summary": "Список уровней сложности",
+                "parameters": [
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Лимит",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Смещение",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список уровней сложности",
+                        "schema": {
+                            "$ref": "#/definitions/difficultylevels.difficultyLevelListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Доступно только администратору. Создает уровень сложности и связывает его с зонами клавиатуры.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DifficultyLevels"
+                ],
+                "summary": "Создание уровня сложности",
+                "parameters": [
+                    {
+                        "description": "Difficulty level payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/difficultylevels.upsertDifficultyLevelRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Уровень сложности создан",
+                        "schema": {
+                            "$ref": "#/definitions/difficultylevels.difficultyLevelSingleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Недостаточно прав",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/difficulty-levels/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DifficultyLevels"
+                ],
+                "summary": "Получение уровня сложности по ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Difficulty level ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Уровень сложности",
+                        "schema": {
+                            "$ref": "#/definitions/difficultylevels.difficultyLevelSingleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Уровень не найден",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Доступно только администратору.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DifficultyLevels"
+                ],
+                "summary": "Удаление уровня сложности",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Difficulty level ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Уровень сложности удален"
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Недостаточно прав",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Уровень не найден",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Доступно только администратору. Обновляет параметры уровня и связи с зонами клавиатуры.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DifficultyLevels"
+                ],
+                "summary": "Обновление уровня сложности",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Difficulty level ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Difficulty level payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/difficultylevels.upsertDifficultyLevelRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Уровень сложности обновлен",
+                        "schema": {
+                            "$ref": "#/definitions/difficultylevels.difficultyLevelSingleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Недостаточно прав",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Уровень не найден",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "consumes": [
@@ -182,6 +496,79 @@
                         }
                     ],
                     "example": "user"
+                }
+            }
+        },
+        "difficultylevels.difficultyLevelListResponse": {
+            "type": "object",
+            "properties": {
+                "difficulty_levels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/difficultylevels.difficultyLevelResponse"
+                    }
+                }
+            }
+        },
+        "difficultylevels.difficultyLevelResponse": {
+            "type": "object",
+            "properties": {
+                "allowed_mistakes": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "key_press_time": {
+                    "type": "number"
+                },
+                "keyboard_zone_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "max_exercise_length": {
+                    "type": "integer"
+                },
+                "min_exercise_length": {
+                    "type": "integer"
+                }
+            }
+        },
+        "difficultylevels.difficultyLevelSingleResponse": {
+            "type": "object",
+            "properties": {
+                "difficulty_level": {
+                    "$ref": "#/definitions/difficultylevels.difficultyLevelResponse"
+                }
+            }
+        },
+        "difficultylevels.upsertDifficultyLevelRequest": {
+            "type": "object",
+            "required": [
+                "keyboard_zone_ids"
+            ],
+            "properties": {
+                "allowed_mistakes": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "key_press_time": {
+                    "type": "number"
+                },
+                "keyboard_zone_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "max_exercise_length": {
+                    "type": "integer"
+                },
+                "min_exercise_length": {
+                    "type": "integer"
                 }
             }
         },

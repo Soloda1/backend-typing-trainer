@@ -51,6 +51,54 @@ definitions:
         - $ref: '#/definitions/models.UserRole'
         example: user
     type: object
+  difficultylevels.difficultyLevelListResponse:
+    properties:
+      difficulty_levels:
+        items:
+          $ref: '#/definitions/difficultylevels.difficultyLevelResponse'
+        type: array
+    type: object
+  difficultylevels.difficultyLevelResponse:
+    properties:
+      allowed_mistakes:
+        type: integer
+      id:
+        type: string
+      key_press_time:
+        type: number
+      keyboard_zone_ids:
+        items:
+          type: string
+        type: array
+      max_exercise_length:
+        type: integer
+      min_exercise_length:
+        type: integer
+    type: object
+  difficultylevels.difficultyLevelSingleResponse:
+    properties:
+      difficulty_level:
+        $ref: '#/definitions/difficultylevels.difficultyLevelResponse'
+    type: object
+  difficultylevels.upsertDifficultyLevelRequest:
+    properties:
+      allowed_mistakes:
+        minimum: 0
+        type: integer
+      key_press_time:
+        type: number
+      keyboard_zone_ids:
+        items:
+          type: string
+        minItems: 1
+        type: array
+      max_exercise_length:
+        type: integer
+      min_exercise_length:
+        type: integer
+    required:
+    - keyboard_zone_ids
+    type: object
   models.UserRole:
     enum:
     - admin
@@ -113,6 +161,211 @@ info:
   title: Typing Trainer Service API
   version: 1.0.0
 paths:
+  /difficulty-levels:
+    get:
+      parameters:
+      - default: 20
+        description: Лимит
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 0
+        description: Смещение
+        in: query
+        minimum: 0
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список уровней сложности
+          schema:
+            $ref: '#/definitions/difficultylevels.difficultyLevelListResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Список уровней сложности
+      tags:
+      - DifficultyLevels
+    post:
+      consumes:
+      - application/json
+      description: Доступно только администратору. Создает уровень сложности и связывает
+        его с зонами клавиатуры.
+      parameters:
+      - description: Difficulty level payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/difficultylevels.upsertDifficultyLevelRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Уровень сложности создан
+          schema:
+            $ref: '#/definitions/difficultylevels.difficultyLevelSingleResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Создание уровня сложности
+      tags:
+      - DifficultyLevels
+  /difficulty-levels/{id}:
+    delete:
+      description: Доступно только администратору.
+      parameters:
+      - description: Difficulty level ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Уровень сложности удален
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "404":
+          description: Уровень не найден
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Удаление уровня сложности
+      tags:
+      - DifficultyLevels
+    get:
+      parameters:
+      - description: Difficulty level ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Уровень сложности
+          schema:
+            $ref: '#/definitions/difficultylevels.difficultyLevelSingleResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "404":
+          description: Уровень не найден
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Получение уровня сложности по ID
+      tags:
+      - DifficultyLevels
+    patch:
+      consumes:
+      - application/json
+      description: Доступно только администратору. Обновляет параметры уровня и связи
+        с зонами клавиатуры.
+      parameters:
+      - description: Difficulty level ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Difficulty level payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/difficultylevels.upsertDifficultyLevelRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Уровень сложности обновлен
+          schema:
+            $ref: '#/definitions/difficultylevels.difficultyLevelSingleResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "404":
+          description: Уровень не найден
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Обновление уровня сложности
+      tags:
+      - DifficultyLevels
   /login:
     post:
       consumes:
