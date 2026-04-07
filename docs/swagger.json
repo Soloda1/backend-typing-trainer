@@ -325,6 +325,181 @@
                 }
             }
         },
+        "/keyboard-zones": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KeyboardZones"
+                ],
+                "summary": "Список зон клавиатуры",
+                "parameters": [
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Лимит",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Смещение",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список зон клавиатуры",
+                        "schema": {
+                            "$ref": "#/definitions/keyboardzones.keyboardZoneListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/keyboard-zones/by-name/{name}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KeyboardZones"
+                ],
+                "summary": "Получение зоны клавиатуры по имени",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Keyboard zone name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Зона клавиатуры",
+                        "schema": {
+                            "$ref": "#/definitions/keyboardzones.keyboardZoneSingleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Зона не найдена",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/keyboard-zones/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "KeyboardZones"
+                ],
+                "summary": "Получение зоны клавиатуры по ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Keyboard zone ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Зона клавиатуры",
+                        "schema": {
+                            "$ref": "#/definitions/keyboardzones.keyboardZoneSingleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Зона не найдена",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "consumes": [
@@ -569,6 +744,39 @@
                 },
                 "min_exercise_length": {
                     "type": "integer"
+                }
+            }
+        },
+        "keyboardzones.keyboardZoneListResponse": {
+            "type": "object",
+            "properties": {
+                "keyboard_zones": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/keyboardzones.keyboardZoneResponse"
+                    }
+                }
+            }
+        },
+        "keyboardzones.keyboardZoneResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "symbols": {
+                    "type": "string"
+                }
+            }
+        },
+        "keyboardzones.keyboardZoneSingleResponse": {
+            "type": "object",
+            "properties": {
+                "keyboard_zone": {
+                    "$ref": "#/definitions/keyboardzones.keyboardZoneResponse"
                 }
             }
         },

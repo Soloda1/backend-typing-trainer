@@ -99,6 +99,27 @@ definitions:
     required:
     - keyboard_zone_ids
     type: object
+  keyboardzones.keyboardZoneListResponse:
+    properties:
+      keyboard_zones:
+        items:
+          $ref: '#/definitions/keyboardzones.keyboardZoneResponse'
+        type: array
+    type: object
+  keyboardzones.keyboardZoneResponse:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      symbols:
+        type: string
+    type: object
+  keyboardzones.keyboardZoneSingleResponse:
+    properties:
+      keyboard_zone:
+        $ref: '#/definitions/keyboardzones.keyboardZoneResponse'
+    type: object
   models.UserRole:
     enum:
     - admin
@@ -366,6 +387,118 @@ paths:
       summary: Обновление уровня сложности
       tags:
       - DifficultyLevels
+  /keyboard-zones:
+    get:
+      parameters:
+      - default: 20
+        description: Лимит
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 0
+        description: Смещение
+        in: query
+        minimum: 0
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список зон клавиатуры
+          schema:
+            $ref: '#/definitions/keyboardzones.keyboardZoneListResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Список зон клавиатуры
+      tags:
+      - KeyboardZones
+  /keyboard-zones/{id}:
+    get:
+      parameters:
+      - description: Keyboard zone ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Зона клавиатуры
+          schema:
+            $ref: '#/definitions/keyboardzones.keyboardZoneSingleResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "404":
+          description: Зона не найдена
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Получение зоны клавиатуры по ID
+      tags:
+      - KeyboardZones
+  /keyboard-zones/by-name/{name}:
+    get:
+      parameters:
+      - description: Keyboard zone name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Зона клавиатуры
+          schema:
+            $ref: '#/definitions/keyboardzones.keyboardZoneSingleResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "404":
+          description: Зона не найдена
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Получение зоны клавиатуры по имени
+      tags:
+      - KeyboardZones
   /login:
     post:
       consumes:
