@@ -10,6 +10,7 @@ import (
 	"backend-typing-trainer/internal/infrastructure/config"
 	authhandler "backend-typing-trainer/internal/infrastructure/http/handlers/auth"
 	difficultylevelshandler "backend-typing-trainer/internal/infrastructure/http/handlers/difficulty_levels"
+	keyboardzoneshandler "backend-typing-trainer/internal/infrastructure/http/handlers/keyboard_zones"
 
 	"backend-typing-trainer/internal/infrastructure/http/middlewares"
 
@@ -23,16 +24,18 @@ type Router struct {
 	log                     ports.Logger
 	authService             input.Auth
 	difficultyLevelsService input.DifficultyLevels
+	keyboardZonesService    input.KeyboardZones
 
 	tokenManager jwtport.TokenManager
 }
 
-func NewRouter(log ports.Logger, authService input.Auth, difficultyLevelsService input.DifficultyLevels, tokenManager jwtport.TokenManager) *Router {
+func NewRouter(log ports.Logger, authService input.Auth, difficultyLevelsService input.DifficultyLevels, keyboardZonesService input.KeyboardZones, tokenManager jwtport.TokenManager) *Router {
 	return &Router{
 		router:                  chi.NewRouter(),
 		log:                     log,
 		authService:             authService,
 		difficultyLevelsService: difficultyLevelsService,
+		keyboardZonesService:    keyboardZonesService,
 
 		tokenManager: tokenManager,
 	}
@@ -65,6 +68,11 @@ func (r *Router) setupProtectedRoutes() {
 		h := difficultylevelshandler.NewHandler(r.log, r.difficultyLevelsService)
 		protected.Get("/difficulty-levels", h.List)
 		protected.Get("/difficulty-levels/{id}", h.GetByID)
+
+		keyboardZonesHandler := keyboardzoneshandler.NewHandler(r.log, r.keyboardZonesService)
+		protected.Get("/keyboard-zones", keyboardZonesHandler.List)
+		protected.Get("/keyboard-zones/{id}", keyboardZonesHandler.GetByID)
+		protected.Get("/keyboard-zones/by-name/{name}", keyboardZonesHandler.GetByName)
 
 		protected.Group(func(admin chi.Router) {
 			admin.Use(middlewares.RequireRoles(r.log, models.UserRoleAdmin))

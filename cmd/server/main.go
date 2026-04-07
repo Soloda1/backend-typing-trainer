@@ -29,12 +29,14 @@ import (
 
 	authapp "backend-typing-trainer/internal/application/auth"
 	difficultylevelsapp "backend-typing-trainer/internal/application/difficulty_levels"
+	keyboardzonesapp "backend-typing-trainer/internal/application/keyboard_zones"
 
 	jwtmanager "backend-typing-trainer/internal/infrastructure/auth/jwt"
 	"backend-typing-trainer/internal/infrastructure/config"
 	httpserver "backend-typing-trainer/internal/infrastructure/http"
 	"backend-typing-trainer/internal/infrastructure/logger"
 	difficultylevelsrepo "backend-typing-trainer/internal/infrastructure/persistence/postgres/difficulty_levels"
+	keyboardzonesrepo "backend-typing-trainer/internal/infrastructure/persistence/postgres/keyboard_zones"
 	usersrepo "backend-typing-trainer/internal/infrastructure/persistence/postgres/users"
 )
 
@@ -68,12 +70,14 @@ func main() {
 	tokenManager := jwtmanager.NewManager(cfg.JWT.Secret, cfg.JWT.TTL, cfg.JWT.Issuer, log)
 	usersRepository := usersrepo.NewRepository(dbPool, log)
 	difficultyLevelsRepository := difficultylevelsrepo.NewRepository(dbPool, log)
+	keyboardZonesRepository := keyboardzonesrepo.NewRepository(dbPool, log)
 
 	authService := authapp.NewService(tokenManager, usersRepository, log)
 	difficultyLevelsService := difficultylevelsapp.NewService(difficultyLevelsRepository, log)
+	keyboardZonesService := keyboardzonesapp.NewService(keyboardZonesRepository, log)
 
 	address := fmt.Sprintf("%s:%d", cfg.HTTPServer.Address, cfg.HTTPServer.Port)
-	server := httpserver.NewServer(address, log, authService, difficultyLevelsService, tokenManager)
+	server := httpserver.NewServer(address, log, authService, difficultyLevelsService, keyboardZonesService, tokenManager)
 
 	serverErr := make(chan error, 1)
 	go func() {
