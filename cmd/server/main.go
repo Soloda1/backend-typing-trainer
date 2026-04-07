@@ -31,6 +31,7 @@ import (
 	difficultylevelsapp "backend-typing-trainer/internal/application/difficulty_levels"
 	exercisesapp "backend-typing-trainer/internal/application/exercises"
 	keyboardzonesapp "backend-typing-trainer/internal/application/keyboard_zones"
+	statisticsapp "backend-typing-trainer/internal/application/statistics"
 
 	jwtmanager "backend-typing-trainer/internal/infrastructure/auth/jwt"
 	"backend-typing-trainer/internal/infrastructure/config"
@@ -39,6 +40,7 @@ import (
 	difficultylevelsrepo "backend-typing-trainer/internal/infrastructure/persistence/postgres/difficulty_levels"
 	exercisesrepo "backend-typing-trainer/internal/infrastructure/persistence/postgres/exercises"
 	keyboardzonesrepo "backend-typing-trainer/internal/infrastructure/persistence/postgres/keyboard_zones"
+	statisticsrepo "backend-typing-trainer/internal/infrastructure/persistence/postgres/statistics"
 	usersrepo "backend-typing-trainer/internal/infrastructure/persistence/postgres/users"
 )
 
@@ -74,14 +76,16 @@ func main() {
 	difficultyLevelsRepository := difficultylevelsrepo.NewRepository(dbPool, log)
 	exercisesRepository := exercisesrepo.NewRepository(dbPool, log)
 	keyboardZonesRepository := keyboardzonesrepo.NewRepository(dbPool, log)
+	statisticsRepository := statisticsrepo.NewRepository(dbPool, log)
 
 	authService := authapp.NewService(tokenManager, usersRepository, log)
 	difficultyLevelsService := difficultylevelsapp.NewService(difficultyLevelsRepository, log)
 	exercisesService := exercisesapp.NewService(exercisesRepository, log)
 	keyboardZonesService := keyboardzonesapp.NewService(keyboardZonesRepository, log)
+	statisticsService := statisticsapp.NewService(statisticsRepository, log)
 
 	address := fmt.Sprintf("%s:%d", cfg.HTTPServer.Address, cfg.HTTPServer.Port)
-	server := httpserver.NewServer(address, log, authService, difficultyLevelsService, exercisesService, keyboardZonesService, tokenManager)
+	server := httpserver.NewServer(address, log, authService, difficultyLevelsService, exercisesService, keyboardZonesService, statisticsService, tokenManager)
 
 	serverErr := make(chan error, 1)
 	go func() {

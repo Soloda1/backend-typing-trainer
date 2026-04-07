@@ -12,6 +12,7 @@ import (
 	difficultylevelshandler "backend-typing-trainer/internal/infrastructure/http/handlers/difficulty_levels"
 	exerciseshandler "backend-typing-trainer/internal/infrastructure/http/handlers/exercises"
 	keyboardzoneshandler "backend-typing-trainer/internal/infrastructure/http/handlers/keyboard_zones"
+	statisticshandler "backend-typing-trainer/internal/infrastructure/http/handlers/statistics"
 
 	"backend-typing-trainer/internal/infrastructure/http/middlewares"
 
@@ -27,11 +28,12 @@ type Router struct {
 	difficultyLevelsService input.DifficultyLevels
 	exercisesService        input.Exercises
 	keyboardZonesService    input.KeyboardZones
+	statisticsService       input.Statistics
 
 	tokenManager jwtport.TokenManager
 }
 
-func NewRouter(log ports.Logger, authService input.Auth, difficultyLevelsService input.DifficultyLevels, exercisesService input.Exercises, keyboardZonesService input.KeyboardZones, tokenManager jwtport.TokenManager) *Router {
+func NewRouter(log ports.Logger, authService input.Auth, difficultyLevelsService input.DifficultyLevels, exercisesService input.Exercises, keyboardZonesService input.KeyboardZones, statisticsService input.Statistics, tokenManager jwtport.TokenManager) *Router {
 	return &Router{
 		router:                  chi.NewRouter(),
 		log:                     log,
@@ -39,6 +41,7 @@ func NewRouter(log ports.Logger, authService input.Auth, difficultyLevelsService
 		difficultyLevelsService: difficultyLevelsService,
 		exercisesService:        exercisesService,
 		keyboardZonesService:    keyboardZonesService,
+		statisticsService:       statisticsService,
 
 		tokenManager: tokenManager,
 	}
@@ -80,6 +83,10 @@ func (r *Router) setupProtectedRoutes() {
 		protected.Get("/keyboard-zones", keyboardZonesHandler.List)
 		protected.Get("/keyboard-zones/{id}", keyboardZonesHandler.GetByID)
 		protected.Get("/keyboard-zones/by-name/{name}", keyboardZonesHandler.GetByName)
+
+		statisticsHandler := statisticshandler.NewHandler(r.log, r.statisticsService)
+		protected.Post("/statistics", statisticsHandler.Create)
+		protected.Get("/statistics", statisticsHandler.List)
 
 		protected.Group(func(admin chi.Router) {
 			admin.Use(middlewares.RequireRoles(r.log, models.UserRoleAdmin))
