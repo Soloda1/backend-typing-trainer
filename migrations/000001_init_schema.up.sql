@@ -18,7 +18,7 @@ CREATE TABLE keyboard_zones (
     symbols TEXT NOT NULL
 );
 
--- Уровни сложности (теперь без привязки к одной зоне)
+-- Уровни сложности
 CREATE TABLE difficulty_levels (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     allowed_mistakes INT NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE level_keyboard_zones (
     FOREIGN KEY (keyboard_zone_id) REFERENCES keyboard_zones(id) ON DELETE CASCADE
 );
 
--- Упражнения (ссылаются на уровень)
+-- Упражнения
 CREATE TABLE exercises (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     text TEXT NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE exercises (
         ON DELETE CASCADE
 );
 
--- Статистика (ссылается на пользователя, уровень, упражнение)
+-- Статистика
 CREATE TABLE statistics (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
