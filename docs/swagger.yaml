@@ -847,60 +847,6 @@ paths:
       tags:
       - Auth
   /statistics:
-    get:
-      description: 'Нужно передать ровно один фильтр: user_id, level_id или exercise_id.'
-      parameters:
-      - description: User ID
-        format: uuid
-        in: query
-        name: user_id
-        type: string
-      - description: Level ID
-        format: uuid
-        in: query
-        name: level_id
-        type: string
-      - description: Exercise ID
-        format: uuid
-        in: query
-        name: exercise_id
-        type: string
-      - default: 20
-        description: Лимит
-        in: query
-        minimum: 1
-        name: limit
-        type: integer
-      - default: 0
-        description: Смещение
-        in: query
-        minimum: 0
-        name: offset
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Список статистики
-          schema:
-            $ref: '#/definitions/statistics.statisticListResponse'
-        "400":
-          description: Неверный запрос
-          schema:
-            $ref: '#/definitions/utils.ErrorResponse'
-        "401":
-          description: Не авторизован
-          schema:
-            $ref: '#/definitions/utils.ErrorResponse'
-        "500":
-          description: Внутренняя ошибка сервера
-          schema:
-            $ref: '#/definitions/utils.InternalErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Список статистики по фильтру
-      tags:
-      - Statistics
     post:
       consumes:
       - application/json
@@ -933,6 +879,153 @@ paths:
       security:
       - BearerAuth: []
       summary: Создание записи статистики
+      tags:
+      - Statistics
+  /statistics/exercises/{exercise_id}:
+    get:
+      parameters:
+      - description: Exercise ID
+        format: uuid
+        in: path
+        name: exercise_id
+        required: true
+        type: string
+      - default: 20
+        description: Лимит
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 0
+        description: Смещение
+        in: query
+        minimum: 0
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список статистики
+          schema:
+            $ref: '#/definitions/statistics.statisticListResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Список статистики по упражнению
+      tags:
+      - Statistics
+  /statistics/levels/{level_id}:
+    get:
+      parameters:
+      - description: Level ID
+        format: uuid
+        in: path
+        name: level_id
+        required: true
+        type: string
+      - default: 20
+        description: Лимит
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 0
+        description: Смещение
+        in: query
+        minimum: 0
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список статистики
+          schema:
+            $ref: '#/definitions/statistics.statisticListResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Список статистики по уровню сложности
+      tags:
+      - Statistics
+  /statistics/users/{user_id}:
+    get:
+      parameters:
+      - description: User ID
+        format: uuid
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - default: 20
+        description: Лимит
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 0
+        description: Смещение
+        in: query
+        minimum: 0
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список статистики
+          schema:
+            $ref: '#/definitions/statistics.statisticListResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "403":
+          description: Недостаточно прав
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/utils.InternalErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Список статистики пользователя
       tags:
       - Statistics
 schemes:

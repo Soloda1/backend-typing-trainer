@@ -911,86 +911,6 @@
             }
         },
         "/statistics": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Нужно передать ровно один фильтр: user_id, level_id или exercise_id.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Statistics"
-                ],
-                "summary": "Список статистики по фильтру",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "User ID",
-                        "name": "user_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "Level ID",
-                        "name": "level_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "Exercise ID",
-                        "name": "exercise_id",
-                        "in": "query"
-                    },
-                    {
-                        "minimum": 1,
-                        "type": "integer",
-                        "default": 20,
-                        "description": "Лимит",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "minimum": 0,
-                        "type": "integer",
-                        "default": 0,
-                        "description": "Смещение",
-                        "name": "offset",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Список статистики",
-                        "schema": {
-                            "$ref": "#/definitions/statistics.statisticListResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Неверный запрос",
-                        "schema": {
-                            "$ref": "#/definitions/utils.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Не авторизован",
-                        "schema": {
-                            "$ref": "#/definitions/utils.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/utils.InternalErrorResponse"
-                        }
-                    }
-                }
-            },
             "post": {
                 "security": [
                     {
@@ -1033,6 +953,228 @@
                     },
                     "401": {
                         "description": "Не авторизован",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/statistics/exercises/{exercise_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Список статистики по упражнению",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Exercise ID",
+                        "name": "exercise_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Лимит",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Смещение",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список статистики",
+                        "schema": {
+                            "$ref": "#/definitions/statistics.statisticListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Недостаточно прав",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/statistics/levels/{level_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Список статистики по уровню сложности",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Level ID",
+                        "name": "level_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Лимит",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Смещение",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список статистики",
+                        "schema": {
+                            "$ref": "#/definitions/statistics.statisticListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Недостаточно прав",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/utils.InternalErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/statistics/users/{user_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Список статистики пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Лимит",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Смещение",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список статистики",
+                        "schema": {
+                            "$ref": "#/definitions/statistics.statisticListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "schema": {
+                            "$ref": "#/definitions/utils.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Недостаточно прав",
                         "schema": {
                             "$ref": "#/definitions/utils.ErrorResponse"
                         }
