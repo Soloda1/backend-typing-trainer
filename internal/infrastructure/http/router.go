@@ -3,11 +3,13 @@ package http
 import (
 	"net/http"
 
+	"backend-typing-trainer/internal/domain/models"
 	input "backend-typing-trainer/internal/domain/ports/input"
 	jwtport "backend-typing-trainer/internal/domain/ports/output/jwt"
 	ports "backend-typing-trainer/internal/domain/ports/output/logger"
 	"backend-typing-trainer/internal/infrastructure/config"
 	authhandler "backend-typing-trainer/internal/infrastructure/http/handlers/auth"
+	difficultylevelshandler "backend-typing-trainer/internal/infrastructure/http/handlers/difficulty_levels"
 
 	"backend-typing-trainer/internal/infrastructure/http/middlewares"
 
@@ -17,18 +19,20 @@ import (
 )
 
 type Router struct {
-	router      *chi.Mux
-	log         ports.Logger
-	authService input.Auth
+	router                  *chi.Mux
+	log                     ports.Logger
+	authService             input.Auth
+	difficultyLevelsService input.DifficultyLevels
 
 	tokenManager jwtport.TokenManager
 }
 
-func NewRouter(log ports.Logger, authService input.Auth, tokenManager jwtport.TokenManager) *Router {
+func NewRouter(log ports.Logger, authService input.Auth, difficultyLevelsService input.DifficultyLevels, tokenManager jwtport.TokenManager) *Router {
 	return &Router{
-		router:      chi.NewRouter(),
-		log:         log,
-		authService: authService,
+		router:                  chi.NewRouter(),
+		log:                     log,
+		authService:             authService,
+		difficultyLevelsService: difficultyLevelsService,
 
 		tokenManager: tokenManager,
 	}
@@ -57,6 +61,17 @@ func (r *Router) setupAuthRoutes() http.Handler {
 func (r *Router) setupProtectedRoutes() {
 	r.router.Group(func(protected chi.Router) {
 		protected.Use(middlewares.AuthMiddleware(r.tokenManager, r.log))
+
+		h := difficultylevelshandler.NewHandler(r.log, r.difficultyLevelsService)
+		protected.Get("/difficulty-levels", h.List)
+		protected.Get("/difficulty-levels/{id}", h.GetByID)
+
+		protected.Group(func(admin chi.Router) {
+			admin.Use(middlewares.RequireRoles(r.log, models.UserRoleAdmin))
+			admin.Post("/difficulty-levels", h.Create)
+			admin.Patch("/difficulty-levels/{id}", h.Update)
+			admin.Delete("/difficulty-levels/{id}", h.Delete)
+		})
 	})
 }
 

@@ -28,11 +28,13 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	authapp "backend-typing-trainer/internal/application/auth"
+	difficultylevelsapp "backend-typing-trainer/internal/application/difficulty_levels"
 
 	jwtmanager "backend-typing-trainer/internal/infrastructure/auth/jwt"
 	"backend-typing-trainer/internal/infrastructure/config"
 	httpserver "backend-typing-trainer/internal/infrastructure/http"
 	"backend-typing-trainer/internal/infrastructure/logger"
+	difficultylevelsrepo "backend-typing-trainer/internal/infrastructure/persistence/postgres/difficulty_levels"
 	usersrepo "backend-typing-trainer/internal/infrastructure/persistence/postgres/users"
 )
 
@@ -65,11 +67,13 @@ func main() {
 
 	tokenManager := jwtmanager.NewManager(cfg.JWT.Secret, cfg.JWT.TTL, cfg.JWT.Issuer, log)
 	usersRepository := usersrepo.NewRepository(dbPool, log)
+	difficultyLevelsRepository := difficultylevelsrepo.NewRepository(dbPool, log)
 
 	authService := authapp.NewService(tokenManager, usersRepository, log)
+	difficultyLevelsService := difficultylevelsapp.NewService(difficultyLevelsRepository, log)
 
 	address := fmt.Sprintf("%s:%d", cfg.HTTPServer.Address, cfg.HTTPServer.Port)
-	server := httpserver.NewServer(address, log, authService, tokenManager)
+	server := httpserver.NewServer(address, log, authService, difficultyLevelsService, tokenManager)
 
 	serverErr := make(chan error, 1)
 	go func() {
