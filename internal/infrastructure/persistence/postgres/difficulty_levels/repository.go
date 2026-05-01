@@ -135,10 +135,6 @@ func (r *Repository) Update(ctx context.Context, level *models.DifficultyLevel) 
 		), deleted_links AS (
 			DELETE FROM level_keyboard_zones
 			WHERE level_id = (SELECT id FROM updated)
-		), inserted_links AS (
-			INSERT INTO level_keyboard_zones (level_id, keyboard_zone_id)
-			SELECT (SELECT id FROM updated), zone_id
-			FROM unnest(@zone_ids::uuid[]) AS zone_id
 		)
 		SELECT COUNT(*) FROM updated
 	`
@@ -164,6 +160,20 @@ func (r *Repository) Update(ctx context.Context, level *models.DifficultyLevel) 
 	if updatedCount == 0 {
 		r.log.Warn("update difficulty level: not found", slog.String("level_id", level.ID.String()))
 		return utils.ErrNotFound
+	}
+
+	insertQuery := `
+		INSERT INTO level_keyboard_zones (level_id, keyboard_zone_id)
+		SELECT @id, zone_id
+		FROM unnest(@zone_ids::uuid[]) AS zone_id
+	`
+	if _, err := r.db.Exec(ctx, insertQuery, args); err != nil {
+		if mappedErr := mapPgError(err); mappedErr != nil {
+			r.log.Warn("update difficulty level expected failure on insert", slog.String("level_id", level.ID.String()), slog.String("error", mappedErr.Error()))
+			return mappedErr
+		}
+		r.log.Error("update difficulty level failed on insert", slog.String("level_id", level.ID.String()), slog.String("error", err.Error()))
+		return fmt.Errorf("update difficulty level insert links: %w", err)
 	}
 
 	r.log.Info("update difficulty level completed", slog.String("level_id", level.ID.String()))
