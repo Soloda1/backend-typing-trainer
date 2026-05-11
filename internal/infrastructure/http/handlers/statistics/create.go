@@ -43,6 +43,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		MistakesPercent: req.MistakesPercent,
 		ExecutionTime:   req.ExecutionTime,
 		Speed:           req.Speed,
+		Status:          req.Status,
 	}
 
 	if err := h.statisticsService.Create(r.Context(), statistic); err != nil {

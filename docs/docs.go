@@ -1424,6 +1424,19 @@ const docTemplate = `{
                 }
             }
         },
+        "models.StatisticStatus": {
+            "type": "string",
+            "enum": [
+                "success",
+                "failed",
+                "aborted"
+            ],
+            "x-enum-varnames": [
+                "StatisticStatusSuccess",
+                "StatisticStatusFailed",
+                "StatisticStatusAborted"
+            ]
+        },
         "models.UserRole": {
             "type": "string",
             "enum": [
@@ -1440,6 +1453,7 @@ const docTemplate = `{
             "required": [
                 "exercise_id",
                 "level_id",
+                "status",
                 "user_id"
             ],
             "properties": {
@@ -1458,6 +1472,18 @@ const docTemplate = `{
                 },
                 "speed": {
                     "type": "number"
+                },
+                "status": {
+                    "enum": [
+                        "success",
+                        "failed",
+                        "aborted"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.StatisticStatus"
+                        }
+                    ]
                 },
                 "user_id": {
                     "type": "string"
@@ -1498,6 +1524,9 @@ const docTemplate = `{
                 },
                 "speed": {
                     "type": "number"
+                },
+                "status": {
+                    "$ref": "#/definitions/models.StatisticStatus"
                 },
                 "user_id": {
                     "type": "string"
@@ -1604,6 +1633,8 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "Backend API для сервиса клавиатурного тренажера.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+	LeftDelim:        "{{",
+	RightDelim:       "}}",
 }
 
 func init() {

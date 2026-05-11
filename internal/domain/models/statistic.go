@@ -14,5 +14,6 @@ type Statistic struct {
 	MistakesPercent float64
 	ExecutionTime   float64
 	Speed           float64
+	Status          StatisticStatus
 	CreatedAt       time.Time
 }

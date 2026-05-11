@@ -151,6 +151,16 @@ definitions:
       keyboard_zone:
         $ref: '#/definitions/keyboardzones.keyboardZoneResponse'
     type: object
+  models.StatisticStatus:
+    enum:
+    - success
+    - failed
+    - aborted
+    type: string
+    x-enum-varnames:
+    - StatisticStatusSuccess
+    - StatisticStatusFailed
+    - StatisticStatusAborted
   models.UserRole:
     enum:
     - admin
@@ -172,11 +182,19 @@ definitions:
         type: number
       speed:
         type: number
+      status:
+        allOf:
+        - $ref: '#/definitions/models.StatisticStatus'
+        enum:
+        - success
+        - failed
+        - aborted
       user_id:
         type: string
     required:
     - exercise_id
     - level_id
+    - status
     - user_id
     type: object
   statistics.statisticListResponse:
@@ -202,6 +220,8 @@ definitions:
         type: number
       speed:
         type: number
+      status:
+        $ref: '#/definitions/models.StatisticStatus'
       user_id:
         type: string
     type: object

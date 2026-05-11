@@ -43,7 +43,8 @@ func (r *Repository) Create(ctx context.Context, statistic *models.Statistic) er
 			exercise_id,
 			mistakes_percent,
 			execution_time,
-			speed
+			speed,
+			status
 		)
 		VALUES (
 			@user_id,
@@ -51,7 +52,8 @@ func (r *Repository) Create(ctx context.Context, statistic *models.Statistic) er
 			@exercise_id,
 			@mistakes_percent,
 			@execution_time,
-			@speed
+			@speed,
+			@status
 		)
 		RETURNING id, created_at
 	`
@@ -63,6 +65,7 @@ func (r *Repository) Create(ctx context.Context, statistic *models.Statistic) er
 		"mistakes_percent": statistic.MistakesPercent,
 		"execution_time":   statistic.ExecutionTime,
 		"speed":            statistic.Speed,
+		"status":           statistic.Status,
 	}
 
 	if err := r.db.QueryRow(ctx, query, args).Scan(&statistic.ID, &statistic.CreatedAt); err != nil {
@@ -80,7 +83,7 @@ func (r *Repository) Create(ctx context.Context, statistic *models.Statistic) er
 
 func (r *Repository) ListByUserID(ctx context.Context, userID uuid.UUID, limit, offset int) ([]*models.Statistic, error) {
 	const query = `
-		SELECT id, user_id, level_id, exercise_id, mistakes_percent, execution_time, speed, created_at
+		SELECT id, user_id, level_id, exercise_id, mistakes_percent, execution_time, speed, status, created_at
 		FROM statistics
 		WHERE user_id = @user_id
 		ORDER BY created_at DESC
@@ -91,7 +94,7 @@ func (r *Repository) ListByUserID(ctx context.Context, userID uuid.UUID, limit, 
 
 func (r *Repository) ListByLevelID(ctx context.Context, levelID uuid.UUID, limit, offset int) ([]*models.Statistic, error) {
 	const query = `
-		SELECT id, user_id, level_id, exercise_id, mistakes_percent, execution_time, speed, created_at
+		SELECT id, user_id, level_id, exercise_id, mistakes_percent, execution_time, speed, status, created_at
 		FROM statistics
 		WHERE level_id = @level_id
 		ORDER BY created_at DESC
@@ -102,7 +105,7 @@ func (r *Repository) ListByLevelID(ctx context.Context, levelID uuid.UUID, limit
 
 func (r *Repository) ListByExerciseID(ctx context.Context, exerciseID uuid.UUID, limit, offset int) ([]*models.Statistic, error) {
 	const query = `
-		SELECT id, user_id, level_id, exercise_id, mistakes_percent, execution_time, speed, created_at
+		SELECT id, user_id, level_id, exercise_id, mistakes_percent, execution_time, speed, status, created_at
 		FROM statistics
 		WHERE exercise_id = @exercise_id
 		ORDER BY created_at DESC
@@ -132,6 +135,7 @@ func (r *Repository) list(ctx context.Context, query string, args pgx.NamedArgs,
 			&statistic.MistakesPercent,
 			&statistic.ExecutionTime,
 			&statistic.Speed,
+			&statistic.Status,
 			&statistic.CreatedAt,
 		); err != nil {
 			r.log.Error(op+" scan failed", slog.String("error", err.Error()))

@@ -37,7 +37,7 @@ func TestHandler_Create(t *testing.T) {
 
 	svc.EXPECT().Create(mock.Anything, mock.AnythingOfType("*models.Statistic")).Return(nil).Once()
 
-	r := httptest.NewRequest(http.MethodPost, "/statistics", strings.NewReader(`{"user_id":"11111111-1111-1111-1111-111111111111","level_id":"22222222-2222-2222-2222-222222222222","exercise_id":"33333333-3333-3333-3333-333333333333","mistakes_percent":5,"execution_time":10,"speed":250}`))
+	r := httptest.NewRequest(http.MethodPost, "/statistics", strings.NewReader(`{"user_id":"11111111-1111-1111-1111-111111111111","level_id":"22222222-2222-2222-2222-222222222222","exercise_id":"33333333-3333-3333-3333-333333333333","mistakes_percent":5,"execution_time":10,"speed":250,"status":"success"}`))
 	rr := httptest.NewRecorder()
 
 	h.Create(rr, r)
