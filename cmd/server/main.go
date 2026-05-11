@@ -32,6 +32,7 @@ import (
 	exercisesapp "backend-typing-trainer/internal/application/exercises"
 	keyboardzonesapp "backend-typing-trainer/internal/application/keyboard_zones"
 	statisticsapp "backend-typing-trainer/internal/application/statistics"
+	usersapp "backend-typing-trainer/internal/application/users"
 
 	jwtmanager "backend-typing-trainer/internal/infrastructure/auth/jwt"
 	"backend-typing-trainer/internal/infrastructure/config"
@@ -83,9 +84,10 @@ func main() {
 	exercisesService := exercisesapp.NewService(exercisesRepository, log)
 	keyboardZonesService := keyboardzonesapp.NewService(keyboardZonesRepository, log)
 	statisticsService := statisticsapp.NewService(statisticsRepository, log)
+	usersService := usersapp.NewService(usersRepository, log)
 
 	address := fmt.Sprintf("%s:%d", cfg.HTTPServer.Address, cfg.HTTPServer.Port)
-	server := httpserver.NewServer(address, log, authService, difficultyLevelsService, exercisesService, keyboardZonesService, statisticsService, tokenManager)
+	server := httpserver.NewServer(address, log, authService, difficultyLevelsService, exercisesService, keyboardZonesService, statisticsService, usersService, tokenManager)
 
 	serverErr := make(chan error, 1)
 	go func() {
