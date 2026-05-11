@@ -1633,8 +1633,6 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "Backend API для сервиса клавиатурного тренажера.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
-	LeftDelim:        "{{",
-	RightDelim:       "}}",
 }
 
 func init() {
